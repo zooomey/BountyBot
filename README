@@ -4,14 +4,16 @@
 - A user can only have one bounty on them at a time.
 - Bounties expire after 30 days. 
 - The person who has a bounty on them cannot collect the bounty, even after it expires.
-- If a person is found, the person who founds them collects the bounty.
-- For each day on the bounty board, a user's bounty increases by 25 points. 
+- If a person is found, the person who found them collects the bounty.
+- For each day on the bounty board, a user's bounty increases by 50 points. 
 - After a person's bounty is collected, they are removed from the bounty board until added on again. 
 
 
 ##############  COMMANDS: ##################
-!bounty <user>: puts a bounty of 100 points on a user. one bounty can be put on a user at a time.
+!bounty place <user>: puts a bounty of 100 points on a user. one bounty can be put on a user at a time.
 !bounty collect <user>: hunter has found other bountied user. hunter collects bounty.
 !bounty board: displays top 10 bounties on individuals
 !bounty leaderboard: displays top 10 bounty hunters
 !bounty status <user>: displays bounty for user on bounty board
+!bounty help: displays this page
+!bounty <else>: "error: command not understood. please use !bounty help for valid commands.
