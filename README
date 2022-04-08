@@ -10,10 +10,16 @@
 
 
 ##############  COMMANDS: ##################
-!bounty place <user>: puts a bounty of 100 points on a user. one bounty can be put on a user at a time.
+!bounty place <user>: initially puts a bounty of 100 points on a user. one bounty can be put on a user at a time.
 !bounty collect <user>: hunter has found other bountied user. hunter collects bounty.
 !bounty board: displays top 10 bounties on individuals
 !bounty leaderboard: displays top 10 bounty hunters
 !bounty status <user>: displays bounty for user on bounty board
 !bounty help: displays this page
-!bounty <else>: "error: command not understood. please use !bounty help for valid commands.
+!bounty <else>: "error: command not understood. please use !bounty help for valid commands."
+
+
+############## ADDITIONAL #################
+- data for hunters is stored in hunters.csv
+- data for bounties is stored in bounties.csv
+
