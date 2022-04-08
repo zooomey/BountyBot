@@ -12,33 +12,49 @@ GUILD= os.getenv('DISCORD_GUILD')
 
 client = discord.Client()
 
-#class bounty:
-#initialize time as 0
-#initialize points as 100
+#class hunter: (!bounty collect <user>)
+    #initializes when bounty is collected
+    #check hunters.csv to see if user exists as hunter
+    #if not:
+        #if hunter doesn't already exist, initialize hunter in data and assign bounty score
+    #if hunter already exists:
+        #add bounty score to hunter's score
+    #remove bountied individual from board
 
-#class hunter:
-#hunter only exists if they collect bounty
-#initialize hunter and assign bounty score
-#remove bountied individual from board
+#class bounty: (!bounty place <user>)
+    #check bounties.csv to see if user already has a bounty on them
+    #if yes:
+        #return error
+    #else:
+        #add bountied individual to data
+        #initialize bounty amount, time
 
-#class passday:
-#if time = 30 -> remove from bounty board
-#users bounty increases by + 50
-#increase all user time by 1
+#class bounty board: (!bounty board)
+    #display all active bounties and bounty scores on users. 
+    #data taken from bounties.csv
+    #all bountied individuals will be removed from board after 30 days
 
-#class board:
-#display top 10 highest bounties on users
-#if less than 10 users exist, only display what's there
+#class hunter leaderboard: (!bounty leaderboard)
+    #display top 10 bounty hunters and their scores
+    #data sorted from hunters.csv
+    #if bounty hunters < 10, only display active bounty hunters. 
 
-#class leaderboard:
-#display top 10 bounty hunters
-#
+#class status (!bounty status <user)
+    #check if user is in #bounties.csv
+        #if not, return error
+    #else:
+        #display user name, time on board, current bounty
+
+
    
 class commands(discord.Client):
     async def on_message(self, message):
         #don't have the bot respond to itself
         if message.author == self.user:
             return
+
+#we can use a switch/case for the contents of the message?
+#split any message string where the first word is "!bounty"
 
         if message.content == "!bounty":
             await message.channel.send('bounty has been placed on {}'.format(message.author.mention))
