@@ -46,6 +46,42 @@ client = discord.Client()
         #display user name, time on board, current bounty
 
 
+#class error (!bounty <invalid>)
+
+
+def hunter():
+    pass
+
+def bounty():
+    pass
+
+def board():
+    pass
+
+def leaderboard():
+    pass
+
+def status():
+    pass
+
+def error():
+    pass
+
+def find(x):
+    if x == 'collect':
+        return hunter()
+    elif x == 'place':
+        return bounty()
+    elif x == 'board':
+        return board()
+    elif x == 'leaderboard':
+        return leaderboard()
+    elif x == 'status':
+        return status()
+    else: 
+        return error()
+
+
    
 class commands(discord.Client):
     async def on_message(self, message):
@@ -53,8 +89,12 @@ class commands(discord.Client):
         if message.author == self.user:
             return
 
-#we can use a switch/case for the contents of the message?
-#split any message string where the first word is "!bounty"
+        msg = message.split(" ")
+        if msg[0].content == "!bounty":
+            find(msg[1])
+
+        else:
+            pass
 
         if message.content == "!bounty":
             await message.channel.send('bounty has been placed on {}'.format(message.author.mention))
