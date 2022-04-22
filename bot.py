@@ -1,106 +1,101 @@
 # bot.py
-from cgi import test
 import os
 from dotenv import load_dotenv
 import random
 import discord
+from discord.ext import commands
+import json
 
+
+intents = discord.Intents.default()
+intents.members = True
+
+bot = commands.Bot(command_prefix='&', intents=intents)
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD= os.getenv('DISCORD_GUILD')
 
-client = discord.Client()
+################
 
-#class hunter: (!bounty collect <user>)
-    #initializes when bounty is collected
-    #check hunters.csv to see if user exists as hunter
-    #if not:
-        #if hunter doesn't already exist, initialize hunter in data and assign bounty score
-    #if hunter already exists:
-        #add bounty score to hunter's score
-    #remove bountied individual from board
+def add_score(member: discord.Member, amount: int):
+    if os.path.isfile("file.json"):
+        with open("file.json", "r") as fp:
+            data = json.load(fp)
+        try:
+            data[f"{member.id}"]["score"] += amount
+        except KeyError:
+            data[f"{member.id}"] = {"score": amount} 
+    else:
+        data = {f"{member.id}": {"score": amount}}
+    with open("file.json", "w+") as fp:
+        json.dump(data, fp, sort_keys=True, indent=4)
 
-#class bounty: (!bounty place <user>)
-    #check bounties.csv to see if user already has a bounty on them
-    #if yes:
-        #return error
-    #else:
-        #add bountied individual to data
-        #initialize bounty amount, time
-
-#class bounty board: (!bounty board)
-    #display all active bounties and bounty scores on users. 
-    #data taken from bounties.csv
-    #all bountied individuals will be removed from board after 30 days
-
-#class hunter leaderboard: (!bounty leaderboard)
-    #display top 10 bounty hunters and their scores
-    #data sorted from hunters.csv
-    #if bounty hunters < 10, only display active bounty hunters. 
-
-#class status (!bounty status <user)
-    #check if user is in #bounties.csv
-        #if not, return error
-    #else:
-        #display user name, time on board, current bounty
+def add_loss(member: discord.Member, amount: int):
+    if os.path.isfile("loss.json"):
+        with open("loss.json", "r") as fp:
+            data = json.load(fp)
+        try:
+            data[f"{member.id}"]["loss"] += amount
+        except KeyError:
+            data[f"{member.id}"] = {"loss": amount} 
+    else:
+        data = {f"{member.id}": {"loss": amount}}
+    with open("loss.json", "w+") as fp:
+        json.dump(data, fp, sort_keys=True, indent=4)
 
 
-#class error (!bounty <invalid>)
+def get_score(member: discord.Member):
+    with open("file.json", "r") as fp:
+        data = json.load(fp)
+    return data[f"{member.id}"]["score"]
+
+def get_loss(member: discord.Member):
+    with open("loss.json", "r") as fp:
+        data = json.load(fp)
+    return data[f"{member.id}"]["loss"]
+
+################
 
 
-def hunter():
-    pass
+@bot.command()
+async def bounty(ctx, members: commands.Greedy[discord.Member]):
+    person = ", ".join(x.name for x in members)
+    add_score(ctx.author, 1)
+    await ctx.send('Bounty has collected for {} by {}.'.format(person, ctx.author))
 
-def bounty():
-    pass
+@bot.command()
+async def leader(ctx):
+    await ctx.send('These are the top bounty hunters:')
 
-def board():
-    pass
+@bot.command()
+async def lowest(ctx):
+    await ctx.send('These are the most hunted individuals:')
 
-def leaderboard():
-    pass
-
-def status():
-    pass
-
-def error():
-    pass
-
-def find(x):
-    if x == 'collect':
-        return hunter()
-    elif x == 'place':
-        return bounty()
-    elif x == 'board':
-        return board()
-    elif x == 'leaderboard':
-        return leaderboard()
-    elif x == 'status':
-        return status()
-    else: 
-        return error()
+@bot.command()
+async def info(ctx):
+    await ctx.send('**Bounty Hunter Commands**: \n\n&bounty - collect a bounty on an individual\n&leader - display hunter leaderboard\n&lowest - display most hunted individuals')
 
 
-   
-class commands(discord.Client):
-    async def on_message(self, message):
-        #don't have the bot respond to itself
-        if message.author == self.user:
-            return
+@bot.command()
+async def cmd1(ctx):
+    await ctx.send(f"You have {get_score(ctx.author)} snipes!")
 
-        msg = message.split(" ")
-        if msg[0].content == "!bounty":
-            find(msg[1])
+@bot.command()
+async def cmd2(ctx):
+    await ctx.send(f"You have {get_loss(ctx.author)} losses!")
 
-        else:
-            pass
+async def get_win_data():
+    with open("file.json", "r") as f:
+        users = json.load(f)
 
-        if message.content == "!bounty":
-            await message.channel.send('bounty has been placed on {}'.format(message.author.mention))
+    return users
+
+@bot.command()
+async def leaderboard(ctx):
+    embed = discord.Embed(title=f"Bounty Leaderboard", colour=discord.Colour.blue())
+    embed.add_field(name="Top Hunters", value=f"\n".join([f"{ctx.guild.get_member(member[0])}: {member[1]} snipes" for member in sorted((await get_win_data()).items(), key=lambda x: x[1]['score'], reverse=True)]))
+    await ctx.send(embed=embed)
 
 
-
-client = commands()
-
-client.run(TOKEN)
+bot.run(TOKEN)
