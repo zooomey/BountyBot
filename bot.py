@@ -7,6 +7,9 @@ from discord.ext import commands
 import json
 
 
+from pkg_resources import parse_version
+
+
 intents = discord.Intents.default()
 intents.members = True
 
@@ -30,6 +33,7 @@ def add_score(member: discord.Member, amount: int):
         data = {f"{member.id}": {"score": amount}}
     with open("file.json", "w+") as fp:
         json.dump(data, fp, sort_keys=True, indent=4)
+
 
 def add_loss(member: discord.Member, amount: int):
     if os.path.isfile("loss.json"):
@@ -57,44 +61,45 @@ def get_loss(member: discord.Member):
 
 ################
 
-
 @bot.command()
-async def bounty(ctx, members: commands.Greedy[discord.Member]):
-    person = ", ".join(x.name for x in members)
+async def bounty(ctx, arg: discord.Member):
+    person = ctx.author.mention
     add_score(ctx.author, 1)
-    await ctx.send('Bounty has collected for {} by {}.'.format(person, ctx.author))
+    add_loss(arg, 1)
+    await ctx.send('Bounty has collected for {} by {}!'.format(person, ctx.author.name))
 
 @bot.command()
-async def leader(ctx):
-    await ctx.send('These are the top bounty hunters:')
-
-@bot.command()
-async def lowest(ctx):
-    await ctx.send('These are the most hunted individuals:')
+async def fry(ctx, members: commands.Greedy[discord.Member]):
+    person = ", ".join(x.name for x in members)
+    add_score(ctx.author, 10)
+    await ctx.send('Bounty has collected for Daddy Fry by {}!'.format(ctx.author))
 
 @bot.command()
 async def info(ctx):
     await ctx.send('**Bounty Hunter Commands**: \n\n&bounty - collect a bounty on an individual\n&leader - display hunter leaderboard\n&lowest - display most hunted individuals')
 
-
-@bot.command()
-async def cmd1(ctx):
-    await ctx.send(f"You have {get_score(ctx.author)} snipes!")
-
-@bot.command()
-async def cmd2(ctx):
-    await ctx.send(f"You have {get_loss(ctx.author)} losses!")
+################
 
 async def get_win_data():
     with open("file.json", "r") as f:
         users = json.load(f)
-
     return users
 
 @bot.command()
 async def leaderboard(ctx):
-    embed = discord.Embed(title=f"Bounty Leaderboard", colour=discord.Colour.blue())
-    embed.add_field(name="Top Hunters", value=f"\n".join([f"{ctx.guild.get_member(member[0])}: {member[1]} snipes" for member in sorted((await get_win_data()).items(), key=lambda x: x[1]['score'], reverse=True)]))
+    embed = discord.Embed(title=f"Bounty Leaderboard", colour=discord.Colour.purple())
+    embed.add_field(name="Top Hunters", value=f"\n".join([f"{await bot.fetch_user(member[0])}: {member[1]['score']} snipes" for member in sorted((await get_win_data()).items(), key=lambda x: x[1], reverse=True)]))
+    await ctx.send(embed=embed)
+
+async def get_loss_data():
+    with open("loss.json", "r") as f:
+        users = json.load(f)
+    return users
+
+@bot.command()
+async def lossboard(ctx):
+    embed = discord.Embed(title=f"Bounty Loserboard", colour=discord.Colour.purple())
+    embed.add_field(name="Most Hunted Users", value=f"\n".join([f"{await bot.fetch_user(member[0])}: {member[1]['loss']} losses" for member in sorted((await get_loss_data()).items(), key=lambda x: x[1], reverse=True)]))
     await ctx.send(embed=embed)
 
 
