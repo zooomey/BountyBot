@@ -62,10 +62,13 @@ def get_loss(member: discord.Member):
 
 @bot.command()
 async def bounty(ctx, arg: discord.Member):
-    person = ctx.author.mention
-    add_score(ctx.author, 1)
-    add_loss(arg, 1)
-    await ctx.send('Bounty has collected for {} by {}!'.format(arg, ctx.author.name))
+    #person = ctx.author.mention
+    if ctx.author == arg:
+        await ctx.send("you can't hunt yourself dumbass :pepega:")
+    else:
+        add_score(ctx.author, 1)
+        add_loss(arg, 1)
+        await ctx.send('Bounty has collected for {} by {}!'.format(arg, ctx.author.name))
 
 @bot.command()
 async def fry(ctx, members: commands.Greedy[discord.Member]):
@@ -75,7 +78,7 @@ async def fry(ctx, members: commands.Greedy[discord.Member]):
 
 @bot.command()
 async def info(ctx):
-    await ctx.send('**Bounty Hunter Commands**: \n\n&bounty - collect a bounty on an individual\n&leader - display hunter leaderboard\n&lowest - display most hunted individuals')
+    await ctx.send('**Bounty Hunter Commands**: \n\n&bounty - collect a bounty on an individual\n&leader - display hunter leaderboard\n&loss - display most hunted individuals\n&fry - photo of daddy fry')
 
 ################
 
