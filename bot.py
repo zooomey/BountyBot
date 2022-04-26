@@ -68,13 +68,13 @@ async def bounty(ctx, arg: discord.Member):
     else:
         add_score(ctx.author, 1)
         add_loss(arg, 1)
-        await ctx.send('Bounty has collected for {} by {}!'.format(arg, ctx.author.name))
+        await ctx.send('Bounty has collected for {} by {}!'.format(arg.name, ctx.author.name))
 
 @bot.command()
 async def fry(ctx, members: commands.Greedy[discord.Member]):
     person = ", ".join(x.name for x in members)
     add_score(ctx.author, 10)
-    await ctx.send('Bounty has collected for Daddy Fry by {}!'.format(ctx.author))
+    await ctx.send('Bounty has collected for Daddy Fry by {}!'.format(ctx.author.name))
 
 @bot.command()
 async def info(ctx):
