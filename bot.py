@@ -87,7 +87,7 @@ async def get_win_data():
 @bot.command()
 async def leader(ctx):
     embed = discord.Embed(title=f"Bounty Leaderboard", colour=discord.Colour.purple())
-    embed.add_field(name="Top Hunters", value=f"\n".join([f"{await bot.fetch_user(member[0])}: {member[1]['score']} snipes" for member in sorted((await get_win_data()).items(), key=lambda x: x[1], reverse=True)]))
+    embed.add_field(name="Top Hunters", value=f"\n".join([f"{await bot.fetch_user(member[0])}: {member[1]['score']} snipes" for member in sorted((await get_win_data()).items(), key=lambda x: x[1]['score'], reverse=True)]))
     await ctx.send(embed=embed)
 
 async def get_loss_data():
@@ -98,7 +98,7 @@ async def get_loss_data():
 @bot.command()
 async def loss(ctx):
     embed = discord.Embed(title=f"Bounty Loserboard", colour=discord.Colour.purple())
-    embed.add_field(name="Most Hunted Users", value=f"\n".join([f"{await bot.fetch_user(member[0])}: {member[1]['loss']} losses" for member in sorted((await get_loss_data()).items(), key=lambda x: x[1], reverse=True)]))
+    embed.add_field(name="Most Hunted Users", value=f"\n".join([f"{await bot.fetch_user(member[0])}: {member[1]['loss']} losses" for member in sorted((await get_loss_data()).items(), key=lambda x: x[1]['loss'], reverse=True)]))
     await ctx.send(embed=embed)
 
 
