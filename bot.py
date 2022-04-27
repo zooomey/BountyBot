@@ -68,13 +68,13 @@ async def bounty(ctx, arg: discord.Member):
     else:
         add_score(ctx.author, 1)
         add_loss(arg, 1)
-        await ctx.send('Bounty has collected for {} by {}!'.format(arg.name, ctx.author.name))
+        await ctx.send('Bounty has collected for <@{}> by <@{}>!'.format(arg.id, ctx.author.id))
 
 @bot.command()
 async def fry(ctx, members: commands.Greedy[discord.Member]):
     person = ", ".join(x.name for x in members)
     add_score(ctx.author, 10)
-    await ctx.send('Bounty has collected for Daddy Fry by {}!'.format(ctx.author.name))
+    await ctx.send('Bounty has collected for Daddy Fry by {}!'.format(ctx.author.id))
 
 @bot.command()
 async def info(ctx):
@@ -90,7 +90,7 @@ async def get_win_data():
 @bot.command()
 async def leader(ctx):
     embed = discord.Embed(title=f"Bounty Leaderboard", colour=discord.Colour.purple())
-    embed.add_field(name="Top Hunters", value=f"\n".join([f"{await bot.fetch_user(member[0])}: {member[1]['score']} snipes" for member in sorted((await get_win_data()).items(), key=lambda x: x[1]['score'], reverse=True)]))
+    embed.add_field(name="Top Hunters", value=f"\n".join([f"{await bot.mention(member[0])}: {member[1]['score']} snipes" for member in sorted((await get_win_data()).items(), key=lambda x: x[1]['score'], reverse=True)]))
     await ctx.send(embed=embed)
 
 async def get_loss_data():
