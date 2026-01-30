@@ -6,9 +6,6 @@ from discord.ext import commands
 import json
 
 
-from pkg_resources import parse_version
-
-
 intents = discord.Intents.default()
 intents.members = True
 
