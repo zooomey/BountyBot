@@ -44,6 +44,33 @@ def add_loss(member: discord.Member, amount: int):
     with open("loss.json", "w+") as fp:
         json.dump(data, fp, sort_keys=True, indent=4)
 
+def remove_score(member: discord.Member, amount: int):
+    if os.path.isfile("file.json"):
+        with open("file.json", "r") as fp:
+            data = json.load(fp)
+        try:
+            data[f"{member.id}"]["score"] -= amount
+        except KeyError:
+            data[f"{member.id}"] = {"score": amount}
+    else:
+        data = {f"{member.id}": {"score": amount}}
+    with open("file.json", "w+") as fp:
+        json.dump(data, fp, sort_keys=True, indent=4)
+
+
+def remove_loss(member: discord.Member, amount: int):
+    if os.path.isfile("loss.json"):
+        with open("loss.json", "r") as fp:
+            data = json.load(fp)
+        try:
+            data[f"{member.id}"]["loss"] -= amount
+        except KeyError:
+            data[f"{member.id}"] = {"loss": amount}
+    else:
+        data = {f"{member.id}": {"loss": amount}}
+    with open("loss.json", "w+") as fp:
+        json.dump(data, fp, sort_keys=True, indent=4)
+
 
 def get_score(member: discord.Member):
     with open("file.json", "r") as fp:
@@ -69,6 +96,17 @@ async def bounty(ctx, arg: discord.Member):
         await ctx.send('Bounty has collected for <@{}> by <@{}>!'.format(arg.id, ctx.author.id))
 
 @bot.command()
+async def removeSnipe(ctx, arg1: discord.Member, arg2: discord.Member):
+    if ctx.author == arg2:
+        print("Error")
+        await ctx.send("taking snipes off yourself is sus :takeaseat:")
+
+    else:
+        remove_score(arg1, 1)
+        remove_loss(arg2, 1)
+        await ctx.send('Removed bounty from <@{}> by <@{}>!'.format(arg2.id, arg1.id))
+
+@bot.command()
 async def fry(ctx, members: commands.Greedy[discord.Member]):
     person = ", ".join(x.name for x in members)
     add_score(ctx.author, 10)
@@ -76,7 +114,7 @@ async def fry(ctx, members: commands.Greedy[discord.Member]):
 
 @bot.command()
 async def info(ctx):
-    await ctx.send('**Bounty Hunter Commands**: \n\n&bounty - collect a bounty on an individual\n&leader - display hunter leaderboard\n&loss - display most hunted individuals\n&fry - photo of daddy fry')
+    await ctx.send('**Bounty Hunter Commands**: \n\n&bounty - collect a bounty on an individual\n&leader - display hunter leaderboard\n&loss - display most hunted individuals\n&fry - photo of daddy fry\n&removeSnipe x y - remove score from x and loss from y')
 
 ################
 
