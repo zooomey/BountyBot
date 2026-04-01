@@ -5,5 +5,5 @@
 &loss - shows bounty lossboard
 &fry - photo of john fry
 &info - bot info
-
+&removeSnipe x y - remove score from x and loss from y
 
